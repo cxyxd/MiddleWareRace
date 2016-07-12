@@ -1,0 +1,24 @@
+<configuration>   
+   
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">   
+    <!-- encoder 默认配置为PatternLayoutEncoder -->   
+    <encoder>   
+      <pattern>%d{HH:mm:ss.SSS}  %-5level  [%file:%line] - %msg%n</pattern>   
+    </encoder>   
+  </appender>   
+   
+  <appender name="fileAppender" class="ch.qos.logback.core.FileAppender">  
+    <file>d:/logs/granularity.log</file>  
+    <encoder><!-- 必须指定，否则不会往文件输出内容 -->  
+        <pattern>%d{HH:mm:ss.SSS}  %-5level  [%file:%line] - %msg%n</pattern>  
+    </encoder>  
+    <append>true</append>  
+    <prudent>false</prudent>  
+</appender>  
+   
+  <root level="ERROR">             
+    <appender-ref ref="STDOUT" /> 
+     <appender-ref ref="fileAppender" />    
+  </root>     
+     
+ </configuration>
