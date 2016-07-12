@@ -13,6 +13,7 @@ import backtype.storm.tuple.Fields;
 
 import com.alibaba.middleware.race.RaceConfig;
 import com.alibaba.middleware.race.Tair.StaticTairOperatorImpl;
+import com.alibaba.middleware.race.bolt.DistributeAllBolt;
 import com.alibaba.middleware.race.bolt.JudgeTBorTMBolt;
 import com.alibaba.middleware.race.bolt.PutOrderBolt;
 import com.alibaba.middleware.race.bolt.RateBolt;
@@ -30,7 +31,9 @@ import com.alibaba.middleware.race.bolt.SplitComputeTMSum;
 
 
 
-jstorm jar preliminary.demo-1.0-SNAPSHOT.jar  com.alibaba.middleware.race.jstorm.RaceTopology
+jstorm jar preliminary.demo-1.0-SNAPSHOT.jar  com.alibaba.middleware.race.jstorm.RaceTopology 41500fyqmw
+
+
 jstorm kill 41500fyqmw
 
 
@@ -46,9 +49,6 @@ jstorm kill 41500fyqmw
 http://ali-middleware-race.oss-cn-shanghai.aliyuncs.com/41500fyqmw.tar.xz
 
 
-      选手拓扑入口类，我们定义必须是com.alibaba.middleware.race.jstorm.RaceTopology
-      因为我们后台对选手的git进行下载打包
-      拓扑运行的入口类默认是com.alibaba.middleware.race.jstorm.RaceTopology； 所以这个主类路径一定要正确
       
       
   全部并发是可以的  他妈的 以后不准再改了    
@@ -62,26 +62,30 @@ public class RaceTopology {
 
 		TopologyBuilder builder = new TopologyBuilder();
 
-		builder.setSpout("spout3", new EmitPaymentSpot(), 2).setNumTasks(2);
+		builder.setSpout("consumer", new ConsumerSpot(), parallelism_hint).setNumTasks(numTask);
 		builder.setSpout("continue_stop", new StopSpout(), 1).setNumTasks(1);
 
-		builder.setBolt("putorder", new PutOrderBolt(), 2).setNumTasks(2)
-				.shuffleGrouping("spout3", RaceConfig.MqTaobaoTradeTopic)
-				.shuffleGrouping("spout3", RaceConfig.MqTmallTradeTopic);
+		builder.setBolt("distribute", new DistributeAllBolt(), parallelism_hint).setNumTasks(numTask)
+		.shuffleGrouping("consumer");
+		
+		
+		builder.setBolt("putorder", new PutOrderBolt(), parallelism_hint).setNumTasks(numTask)
+				.shuffleGrouping("distribute", RaceConfig.MqTaobaoTradeTopic)
+				.shuffleGrouping("distribute", RaceConfig.MqTmallTradeTopic);
 
-		builder.setBolt("judgeTBorTB", new JudgeTBorTMBolt(), 3).setNumTasks(3)
-				.shuffleGrouping("spout3", RaceConfig.MqPayTopic);
+		builder.setBolt("judgeTBorTB", new JudgeTBorTMBolt(), numWorker).setNumTasks(numWorker)
+				.shuffleGrouping("distribute", RaceConfig.MqPayTopic);
 
-		builder.setBolt("bolt_TM", new SplitComputeTMSum(), 2).setNumTasks(2)
+		builder.setBolt("bolt_TM", new SplitComputeTMSum(), parallelism_hint).setNumTasks(numTask)
 				.allGrouping("continue_stop", "stop")
 				.shuffleGrouping("judgeTBorTB", RaceConfig.MqTmallTradeTopic);
 
-		builder.setBolt("bolt_TB", new SplitComputeTBSum(), 2).setNumTasks(2)
+		builder.setBolt("bolt_TB", new SplitComputeTBSum(), parallelism_hint).setNumTasks(numTask)
 				.allGrouping("continue_stop", "stop")
 				.shuffleGrouping("judgeTBorTB", RaceConfig.MqTaobaoTradeTopic);
 
-		builder.setBolt("rate3", new RateBolt(), 3).setNumTasks(3)
-				.fieldsGrouping("spout3", "rate", new Fields("createTime"))
+		builder.setBolt("rate3", new RateBolt(), numWorker).setNumTasks(numWorker)
+				.fieldsGrouping("distribute", "rate", new Fields("createTime"))
 				.allGrouping("continue_stop", "stop");
 		
 		return builder; 
@@ -92,9 +96,9 @@ public class RaceTopology {
 	// private static Logger logger =
 	// LoggerFactory.getLogger(RaceTopology.class);
 
-	private static int numTask=2;
-	private static int parallelism_hint=2;
-	private static int numWorker=3;
+	private static int numTask=1;
+	private static int parallelism_hint=1;
+	private static int numWorker=1;
 	public static void main(String[] args) throws Exception {
 	//	tair
 	//	StaticTairOperatorImpl.getin   .put(1, 1);

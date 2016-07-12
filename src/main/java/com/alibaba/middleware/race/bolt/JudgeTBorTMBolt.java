@@ -54,19 +54,6 @@ public class JudgeTBorTMBolt extends BaseRichBolt {
 		 * 
 		 */
 		
-		//十秒后开始执行 之后每隔1秒再执行一次
-//		int delayTime=0;
-//		if (RaceConfig.TairGroup.equals("group_1")) {
-//			delayTime=50;
-//		}else {
-//			delayTime=18*60*1000;
-//		}
-//		new Timer().schedule(new TimerTask() {  
-//            @Override
-//            public void run() {  
-//            	execute(null);
-//            }  
-//        }, delayTime,10000);  
 	}
 
 	@SuppressWarnings("unchecked")
@@ -74,15 +61,13 @@ public class JudgeTBorTMBolt extends BaseRichBolt {
 	public void execute(Tuple input) {
 		try {
 
-			List<PaymentMessage> pays = null;
+			List<PaymentMessage> pays = (List<PaymentMessage>) input.getValueByField("pays");
 
-			pays = (List<PaymentMessage>) input.getValueByField("pays");
 
 			List<PaymentMessage> tbList = new ArrayList<PaymentMessage>();
 			List<PaymentMessage> tmList = new ArrayList<PaymentMessage>();
 			PaymentMessage failedMessage = null;
 
-			// logger.error(" 我已经成功分辨了 消息 "+count+"  "+orders.hashCode());
 
 			// 为什么要取出来 自己想
 			int fails = failedPayment.size();
@@ -111,7 +96,7 @@ public class JudgeTBorTMBolt extends BaseRichBolt {
 			if (tbList.size() > 0) {
 				count.addAndGet(tbList.size());
 				if (count.get() % 10000 < 10)
-					logger.error("我是judge 给tb发送 " + tbList.size());
+					logger.error(count+"前面是总计 我是judge 给tb发送 " + tbList.size());
 
 				collector.emit(RaceConfig.MqTaobaoTradeTopic,
 						new Values(tbList));

@@ -49,6 +49,7 @@ public class SplitComputeTBSum implements IRichBolt {
 		logger.error("写入tair  "+taobaoSum.size()+"   TB");
 
 		 DecimalFormat df = new DecimalFormat("#.00");  
+		 int i=0;
 		for(Entry<String, Double> entry: taobaoSum.entrySet() ){
 			String key=entry.getKey();
 			Double value=entry.getValue();
@@ -59,6 +60,10 @@ public class SplitComputeTBSum implements IRichBolt {
 			}
 			if (valueFromTair==-1&&value-valueFromTair>1) 
 				tair.put(entry.getKey(), Double.parseDouble(df.format(entry.getValue())));
+//			i++;
+//			if (i<10) {
+//				logger.error("tair 具体数值"+entry.getKey()+"---"+tair.get(entry.getKey()).toString());
+//			}
 		}
 	}
 	
@@ -88,7 +93,7 @@ public class SplitComputeTBSum implements IRichBolt {
 		String id = tuple.getSourceStreamId();
 		List<PaymentMessage> list=(List<PaymentMessage>) tuple.getValueByField("list");
 		count.addAndGet(list.size());
-	//	logger.error("这次收到 :"+list.size());
+		logger.error("这次收到 :"+list.size());
 		if (count.get()>0&&count.get()%10000<10) {
 			logger.error("我已经处理了: TB "+count.get()+ " "+Thread.currentThread());
 		}

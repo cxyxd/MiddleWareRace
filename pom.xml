@@ -82,10 +82,10 @@
                     <artifactId>slf4j-jdk14</artifactId>
                 </exclusion>
                 
-        	 <exclusion> 
+         	 <exclusion> 
                      <artifactId>jcl-over-slf4j</artifactId>
-                     <groupId>org.slf4j</groupId>                <!--      这个一会得删除-->
-                 </exclusion>  
+                     <groupId>org.slf4j</groupId>                 <!--    这个一会得删除--> 
+                 </exclusion> 
             </exclusions>
         </dependency> 
 

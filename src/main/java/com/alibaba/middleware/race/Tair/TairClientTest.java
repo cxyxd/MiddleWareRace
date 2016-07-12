@@ -21,29 +21,37 @@ public class TairClientTest {
 		System.out.println(tair.get(1));
 	//	StaticTairOperatorImpl.init();
 	//	StaticTairOperatorImpl.get(null);
-		int begintime=1468232220;  //10000
-		int endtime  =begintime+12000;
+		int begintime=1467875340-6000;  //10000
+		int endtime  =begintime+15000;
 
 		for (int i = begintime; i <= endtime; i+=60) {
 			Object o=tair.get(RaceConfig.prex_taobao+i);
 			if (o!=null) {
-				logger.error(RaceConfig.prex_taobao+i+": " +o);
+				System.out.println(RaceConfig.prex_taobao+i+": " +o);
 			}
 		}
 		
-		logger.error("--------------");
+		System.out.println("--------------");
 		
 		for (int i = begintime; i <= endtime; i+=60) {
 			Object o=tair.get(RaceConfig.prex_tmall+i);
 			if (o!=null) {
-				logger.error(RaceConfig.prex_tmall+" "+i+" : " +o);
+				System.out.println(RaceConfig.prex_tmall+" "+i+" : " +o);
 			}
 		}
 		
-		logger.error("--------------");
+		for (int i = begintime; i <= endtime; i+=60) {
+			Object o=tair.get(RaceConfig.prex_ratio+i);
+			if (o!=null) {
+				System.out.println(RaceConfig.prex_ratio+" "+i+" : " +o);
+			}
+		}
+		
+		System.out.println("--------------");
 		for (int i = begintime; i <= endtime; i+=60) {
 			StaticTairOperatorImpl.delete(RaceConfig.prex_taobao+i);
 			StaticTairOperatorImpl.delete(RaceConfig.prex_tmall+i);
+			StaticTairOperatorImpl.delete(RaceConfig.prex_ratio+i);
 		}
 		
 		

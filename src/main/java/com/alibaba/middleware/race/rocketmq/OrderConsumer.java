@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.middleware.race.RaceConfig;
-import com.alibaba.middleware.race.jstorm.EmitPaymentSpot;
 import com.alibaba.rocketmq.client.consumer.DefaultMQPushConsumer;
 import com.alibaba.rocketmq.client.consumer.listener.ConsumeConcurrentlyContext;
 import com.alibaba.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
@@ -33,7 +32,7 @@ public class OrderConsumer {
 	protected static transient LinkedBlockingDeque<MessageExt> orders_tb_Deque;
 	protected static transient LinkedBlockingDeque<MessageExt> orders_tm_Deque;
 	protected static  transient LinkedBlockingDeque<MessageExt> psysDeque;
-	private static Logger log = LoggerFactory.getLogger(EmitPaymentSpot.class);
+	private static Logger log = LoggerFactory.getLogger(OrderConsumer.class);
 
 	
     public static void main(String[] args) throws InterruptedException, MQClientException {

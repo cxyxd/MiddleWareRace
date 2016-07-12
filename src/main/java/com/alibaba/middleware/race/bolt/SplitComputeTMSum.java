@@ -91,9 +91,9 @@ public class SplitComputeTMSum implements IRichBolt {
 		List<PaymentMessage> list=(List<PaymentMessage>) tuple.getValueByField("list");
 	//	logger.error("这次收到 :"+list.size());
 		count.addAndGet(list.size());
-		if (count.get()>0&&count.get()%10000<10) {
-			logger.error("我已经处理了: TM "+count.get()+ " "+Thread.currentThread());
-		}
+//		if (count.get()>0&&count.get()%10000<10) {
+//			logger.error("我已经处理了: TM "+count.get()+ " "+Thread.currentThread());
+//		}
 		
 		for (PaymentMessage pay:list) {
 			long createTime=(pay.getCreateTime()/1000/60)*60;
